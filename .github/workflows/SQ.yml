@@ -3,8 +3,8 @@ name: workflow_demo(SQ,PA,HF)
 on:
   workflow_dispatch:
     inputs:
-      version:
-        description: "SQ(Start QA), PA(Patch), HF(HotFix)"
+      selection:
+        description: "major, minor"
         required: true
         # default: "warning"
         # type: choice
@@ -34,14 +34,17 @@ jobs:
           echo "CURRENT_VERSION=$(cat info/version.info)" >> $GITHUB_ENV
       - name: update version
         run: |
-          INPUT_SELECTION="${{ github.event.inputs.veresion }}"
+          INPUT_SELECTION="${{ github.event.inputs.selection }}"
           MAJOR=$(echo "${{ env.CURRENT_VERSION }}" | cut -d '.' -f1)
           MINOR=$(echo "${{ env.CURRENT_VERSION }}" | cut -d '.' -f2)
           PATCH=$(echo "${{ env.CURRENT_VERSION }}" | cut -d '.' -f3)
 
-          # if [[ "${INPUT_SELECTION}" == "SQ" ]]; then
+          if [[ "${INPUT_SELECTION}" == "minor" ]]; then
             NEW_MINOR=$((MINOR + 1))
             NEW_VERSION="$MAJOR.$NEW_MINOR.0"
+          elif [[ "${INPUT_SELECTION}" == "major" ]]; then
+            NEW_MAJOR=$((MAJOR + 1))
+            NEW_VERSION="$NEW_MAJOR.0.0"
           # elif [[ "${INPUT_SELECTION}" == "PA" || "${INPUT_SELECTION}" == "HF" ]]; then
             # NEW_PATCH=$((PATCH + 1))
             # NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
@@ -64,10 +67,10 @@ jobs:
         with:
           ref: main
           fetch-depth: 100
-      - name: setup git user
-        run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+      # - name: setup git user
+      #   run: |
+      #     git config --global user.name 'github-actions[bot]'
+      #     git config --global user.email 'github-actions[bot]@users.noreply.github.com'
       - name: merge release into main
         run: |
           git fetch origin release
@@ -86,10 +89,10 @@ jobs:
           ref: main
           fetch-depth: 100
 
-      - name: setup git user
-        run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+      # - name: setup git user
+      #   run: |
+      #     git config --global user.name 'github-actions[bot]'
+      #     git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
       - name: get update verison
         run: |
