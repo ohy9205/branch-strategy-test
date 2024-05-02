@@ -88,5 +88,7 @@ jobs:
           echo "An error occurred, rolling back changes..."
           git reset --hard "${{ env.OLD_HEAD }}"
           git push origin HEAD:release --force
-          git tag -d "${{ env.NEW_VERSION }}"
-          git push origin :refs/tags/"${{ env.NEW_VERSION }}"
+          if [ -n "${{ env.NEW_VERSION }}" ]; then
+            git tag -d "${{ env.NEW_VERSION }}"
+            git push origin :refs/tags/"${{ env.NEW_VERSION }}"
+          fi
