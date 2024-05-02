@@ -27,13 +27,12 @@ jobs:
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-      - name: get current version
-        run: |
-          echo "CURRENT_VERSION=$(cat info/version.info)" >> $GITHUB_ENV
-      - name: save current HEAD
+      - name: save current HEAD (for rollback)
         run: echo "OLD_HEAD=$(git rev-parse HEAD)" >> $GITHUB_ENV
       - name: update version
         run: |
+          echo "CURRENT_VERSION=$(cat info/version.info)" >> $GITHUB_ENV
+
           INPUT_SELECTION="${{ github.event.inputs.selection }}"
           MAJOR=$(echo "${{ env.CURRENT_VERSION }}" | cut -d '.' -f1)
           MINOR=$(echo "${{ env.CURRENT_VERSION }}" | cut -d '.' -f2)
@@ -48,7 +47,6 @@ jobs:
           fi
 
           VERSION="${NEW_VERSION}"  
-
 
           echo "UPDATE_VERSION=${VERSION}" >> $GITHUB_ENV
           echo $VERSION > info/version.info
