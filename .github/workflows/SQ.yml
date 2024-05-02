@@ -57,8 +57,8 @@ jobs:
           git push origin release
       - name: merge release into main
         run: |
-          git fetch origin mainss
-          git switch mainsss
+          git fetch origin main
+          git switch main origin/main
           if ! git merge --ff origin/release; then
             echo "FF merge failed, falling back to no-FF merge."
             git merge --no-ff origin/release -m "Merge release into main with merge commit "
