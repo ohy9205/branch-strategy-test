@@ -68,11 +68,11 @@ jobs:
     needs: update_version_only
     runs-on: ubuntu-latest
     steps:
-      # - name: checkout main branch
-      #   uses: actions/checkout@v4
-      #   with:
-      #     ref: main
-      #     fetch-depth: 100
+      - name: checkout main branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 100
       # - name: setup git user
       #   run: |
       #     git config --global user.name 'github-actions[bot]'
@@ -89,11 +89,11 @@ jobs:
     needs: merge_to_main_only
     runs-on: ubuntu-latest
     steps:
-      - name: checkout main branch
-        uses: actions/checkout@v4
-        with:
-          ref: main
-          fetch-depth: 100
+      # - name: checkout main branch
+      #   uses: actions/checkout@v4
+      #   with:
+      #     ref: main
+      #     fetch-depth: 100
 
       # - name: setup git user
       #   run: |
