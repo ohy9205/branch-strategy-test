@@ -30,6 +30,8 @@ jobs:
       - name: get current version
         run: |
           echo "CURRENT_VERSION=$(cat info/version.info)" >> $GITHUB_ENV
+      - name: save current HEAD
+        run: echo "OLD_HEAD=$(git rev-parse HEAD)" >> $GITHUB_ENV
       - name: update version
         run: |
           INPUT_SELECTION="${{ github.event.inputs.selection }}"
@@ -65,7 +67,7 @@ jobs:
             git merge --no-ff origin/release -m "Merge release into main with merge commit "
           fi
           git push origin main
-      - name: process
+      - name: tag process
         run: |
           set -e  # terminate on error
 
@@ -85,6 +87,7 @@ jobs:
         if: ${{ failure() }}
         run: |
           echo "An error occurred, rolling back changes..."
-          git push origin --delete "${{ env.NEW_VERSION }}"
+          git reset --hard "${{ env.OLD_HEAD }}"
+          git push origin HEAD:release --force
           git tag -d "${{ env.NEW_VERSION }}"
           git push origin :refs/tags/"${{ env.NEW_VERSION }}"
