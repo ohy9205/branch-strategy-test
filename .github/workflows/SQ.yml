@@ -1,21 +1,15 @@
-name: workflow_demo(SQ,PA,HF)
+name: SQ modify
 
 on:
   workflow_dispatch:
     inputs:
       selection:
-        description: "major, minor"
+        description: "major or minor"
         required: true
         type: choice
         options:
           - major
           - minor
-        # default: "warning"
-        # type: choice
-        # options:
-        #   - SQ
-        #   - PA
-        #   - HF
 
 permissions:
   contents: write
@@ -49,9 +43,6 @@ jobs:
           elif [[ "${INPUT_SELECTION}" == "major" ]]; then
             NEW_MAJOR=$((MAJOR + 1))
             NEW_VERSION="$NEW_MAJOR.0.0"
-          # elif [[ "${INPUT_SELECTION}" == "PA" || "${INPUT_SELECTION}" == "HF" ]]; then
-            # NEW_PATCH=$((PATCH + 1))
-            # NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
           fi
 
           VERSION="${NEW_VERSION}"  
@@ -64,19 +55,6 @@ jobs:
           git add info/version.info
           git commit -m "Update Version to ${VERSION}"
           git push origin release
-      # merge_to_main_only:
-      #   needs: update_version_only
-      #   runs-on: ubuntu-latest
-      #   steps:
-      #     - name: checkout main branch
-      #       uses: actions/checkout@v4
-      #       with:
-      #         ref: main
-      #         fetch-depth: 100
-      # - name: setup git user
-      #   run: |
-      #     git config --global user.name 'github-actions[bot]'
-      #     git config --global user.email 'github-actions[bot]@users.noreply.github.com'
       - name: merge release into main
         run: |
           git fetch origin main
@@ -86,30 +64,10 @@ jobs:
             git merge --no-ff origin/release -m "Merge release into main with merge commit "
           fi
           git push origin main
-      # apply_tag:
-      #   needs: merge_to_main_only
-      #   runs-on: ubuntu-latest
-      #   steps:
-      #     - name: checkout main branch
-      #       uses: actions/checkout@v4
-      #       with:
-      #         ref: main
-      #         fetch-depth: 100
-
-      # - name: setup git user
-      #   run: |
-      #     git config --global user.name 'github-actions[bot]'
-      #     git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-
-      - name: get update verison
-        run: |
-          # echo "UPDATE_VERSION=$(cat info/version.info)" >> $GITHUB_ENV
-
       - name: process
         run: |
           set -e  # terminate on error
 
-          # VERSION="${{ env.UPDATE_VERSION }}"
           VERSION_TAG="v${{ env.UPDATE_VERSION }}"
 
           git tag "${VERSION_TAG}"
