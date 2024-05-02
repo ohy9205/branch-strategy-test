@@ -56,6 +56,8 @@ jobs:
 
           VERSION="${NEW_VERSION}"  
 
+
+          echo "UPDATE_VERSION=${VERSION}" >> $GITHUB_ENV
           echo $VERSION > info/version.info
           echo "Updated Version to $VERSION"
 
@@ -66,11 +68,11 @@ jobs:
     needs: update_version_only
     runs-on: ubuntu-latest
     steps:
-      - name: checkout main branch
-        uses: actions/checkout@v4
-        with:
-          ref: main
-          fetch-depth: 100
+      # - name: checkout main branch
+      #   uses: actions/checkout@v4
+      #   with:
+      #     ref: main
+      #     fetch-depth: 100
       # - name: setup git user
       #   run: |
       #     git config --global user.name 'github-actions[bot]'
@@ -100,13 +102,13 @@ jobs:
 
       - name: get update verison
         run: |
-          echo "UPDATE_VERSION=$(cat info/version.info)" >> $GITHUB_ENV
+          # echo "UPDATE_VERSION=$(cat info/version.info)" >> $GITHUB_ENV
 
       - name: process
         run: |
           set -e  # terminate on error
 
-          VERSION="${{ env.UPDATE_VERSION }}"
+          # VERSION="${{ env.UPDATE_VERSION }}"
           VERSION_TAG="v${{ env.UPDATE_VERSION }}"
 
           git tag "${VERSION_TAG}"
