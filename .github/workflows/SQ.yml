@@ -6,6 +6,10 @@ on:
       selection:
         description: "major, minor"
         required: true
+        type: choice
+        options:
+          - major
+          - minor
         # default: "warning"
         # type: choice
         # options:
