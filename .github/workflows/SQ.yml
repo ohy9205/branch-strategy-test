@@ -58,7 +58,8 @@ jobs:
       - name: merge release into main
         run: |
           git fetch origin main
-          git switch -c main origin/main
+          # git switch -c main origin/main
+          git switch main
           if ! git merge --ff origin/release; then
             echo "FF merge failed, falling back to no-FF merge."
             git merge --no-ff origin/release -m "Merge release into main with merge commit "
@@ -80,3 +81,10 @@ jobs:
             git tag QC
           fi
           git push -f origin QC
+      - name: rollback if failure
+        if: ${{ failure() }}
+        run: |
+          echo "An error occurred, rolling back changes..."
+          git push origin --delete "${{ env.NEW_VERSION }}"
+          git tag -d "${{ env.NEW_VERSION }}"
+          git push origin :refs/tags/"${{ env.NEW_VERSION }}"
