@@ -79,7 +79,8 @@ jobs:
       #     git config --global user.email 'github-actions[bot]@users.noreply.github.com'
       - name: merge release into main
         run: |
-          git switch origin main
+          git fetch origin main
+          git switch -c main origin/main
           if ! git merge --ff origin/release; then
             echo "FF merge failed, falling back to no-FF merge."
             git merge --no-ff origin/release -m "Merge release into main with merge commit "
