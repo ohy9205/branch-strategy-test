@@ -64,15 +64,15 @@ jobs:
           git add info/version.info
           git commit -m "Update Version to ${VERSION}"
           git push origin release
-  merge_to_main_only:
-    needs: update_version_only
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout main branch
-        uses: actions/checkout@v4
-        with:
-          ref: main
-          fetch-depth: 100
+      # merge_to_main_only:
+      #   needs: update_version_only
+      #   runs-on: ubuntu-latest
+      #   steps:
+      #     - name: checkout main branch
+      #       uses: actions/checkout@v4
+      #       with:
+      #         ref: main
+      #         fetch-depth: 100
       # - name: setup git user
       #   run: |
       #     git config --global user.name 'github-actions[bot]'
@@ -85,15 +85,15 @@ jobs:
             git merge --no-ff origin/release -m "Merge release into main with merge commit "
           fi
           git push origin main
-  apply_tag:
-    needs: merge_to_main_only
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout main branch
-        uses: actions/checkout@v4
-        with:
-          ref: main
-          fetch-depth: 100
+      # apply_tag:
+      #   needs: merge_to_main_only
+      #   runs-on: ubuntu-latest
+      #   steps:
+      #     - name: checkout main branch
+      #       uses: actions/checkout@v4
+      #       with:
+      #         ref: main
+      #         fetch-depth: 100
 
       # - name: setup git user
       #   run: |
