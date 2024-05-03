@@ -31,13 +31,12 @@ jobs:
         run: echo "OLD_HEAD=$(git rev-parse HEAD)" >> $GITHUB_ENV
       - name: update version
         run: |
-          echo "CURRENT_VERSION=$(cat info/version.info)" >> $GITHUB_ENV
+          CURRENT_VERSION=$(cat info/version.info)
 
           INPUT_SELECTION="${{ github.event.inputs.selection }}"
-          MAJOR=$(echo "${{ env.CURRENT_VERSION }}" | cut -d '.' -f1)
-          MINOR=$(echo "${{ env.CURRENT_VERSION }}" | cut -d '.' -f2)
-          PATCH=$(echo "${{ env.CURRENT_VERSION }}" | cut -d '.' -f3)
-
+          MAJOR=$(echo "${CURRENT_VERSION}" | cut -d '.' -f1)
+          MINOR=$(echo "${CURRENT_VERSION}" | cut -d '.' -f2)
+          PATCH=$(echo "${CURRENT_VERSION}" | cut -d '.' -f3)
 
           if [[ "${INPUT_SELECTION}" == "minor" ]]; then
             NEW_MINOR=$((MINOR + 1))
