@@ -73,7 +73,7 @@ jobs:
         run: |
           git fetch origin main
           git switch -c main origin/main
-          git merge --ff origin/release -m "Merge release into main with merge commit(ff)
+          git merge --ff origin/release -m "Merge release into main with merge commit(ff)"
 
           git push origin main
       - name: rollback if failure
