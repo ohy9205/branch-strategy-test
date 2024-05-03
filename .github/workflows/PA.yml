@@ -74,10 +74,7 @@ jobs:
           git fetch origin main
           git switch -c main origin/main
           git merge --ff origin/release -m "Merge release into main with merge commit(ff)
-          # if ! git merge --ff origin/release -m "Merge release into main with merge commit(ff)"; then
-            # echo "FF merge failed, falling back to no-FF merge."
-            # git merge --no-ff origin/release -m "Merge release into main with merge commit(no ff)"
-          # fi
+
           git push origin main
       - name: rollback if failure
         if: ${{ failure() }}
