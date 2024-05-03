@@ -2,10 +2,10 @@ name: PA
 
 on:
   workflow_dispatch:
-    inputs:
-      selection:
-        description: "patch"
-        required: true
+    # inputs:
+    # selection:
+    # description: "patch"
+    # required: true
 
 permissions:
   contents: write
