@@ -1,11 +1,9 @@
-name: PA
+# select 옵션 제거, INPUT_SELECTION 제거
+# rollback코드 태그삭제 부분 수정
+name: Patch
 
 on:
   workflow_dispatch:
-    # inputs:
-    # selection:
-    # description: "patch"
-    # required: true
 
 permissions:
   contents: write
@@ -29,30 +27,24 @@ jobs:
         run: |
           CURRENT_VERSION=$(cat info/version.info)
 
-          INPUT_SELECTION="${{ github.event.inputs.selection }}"
+          echo "CURRENT_VERSION: $CURRENT_VERSION"
+
           MAJOR=$(echo "${CURRENT_VERSION}" | cut -d '.' -f1)
           MINOR=$(echo "${CURRENT_VERSION}" | cut -d '.' -f2)
           PATCH=$(echo "${CURRENT_VERSION}" | cut -d '.' -f3)
 
-          # if [[ "${INPUT_SELECTION}" == "minor" ]]; then
-          #   NEW_MINOR=$((MINOR + 1))
-          #   NEW_VERSION="$MAJOR.$NEW_MINOR.0"
-          # elif [[ "${INPUT_SELECTION}" == "major" ]]; then
-          #   NEW_MAJOR=$((MAJOR + 1))
-          #   NEW_VERSION="$NEW_MAJOR.0.0"
-          # fi
-
           NEW_PATCH=$((PATCH + 1))
-          NEW_VERSION=$MAJOR.$MINOR.$NEW_PATCH
-          VERSION="${NEW_VERSION}"  
+          NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
 
-          echo "UPDATE_VERSION=${VERSION}" >> $GITHUB_ENV
-          echo $VERSION > info/version.info
-          echo "Updated Version to $VERSION"
+
+          echo "NEW_VERSION=${NEW_VERSION}" >> $GITHUB_ENV
+          echo $NEW_VERSION > info/version.info
+          echo "Updated Version to $NEW_VERSION"
 
           git add info/version.info
-          git commit -m "Update Version to ${VERSION}"
+          git commit -m "Update Version to ${NEW_VERSION}"
           git push origin release
+
       - name: tag process
         run: |
           set -e  # terminate on error
@@ -69,12 +61,16 @@ jobs:
             git tag QC
           fi
           git push -f origin QC
+
       - name: merge release into main
         run: |
           git fetch origin main
           git switch -c main origin/main
-          git merge --ff -X their origin/release -m "Merge release into main with merge commit(ff)"
 
+          if ! git merge --ff-only origin/release; then
+            echo "FF merge failed, falling back to no-FF merge."
+            git merge --no-ff -X theirs origin/release -m "ff merge failed. Release branch fixes are applied first"
+          fi
           git push origin main
       - name: rollback if failure
         if: ${{ failure() }}
@@ -82,7 +78,6 @@ jobs:
           echo "An error occurred, rolling back changes..."
           git reset --hard "${{ env.OLD_HEAD }}"
           git push origin HEAD:release --force
-          echo ${{env.NEW_VERSION}}
           if [ -n "${{ env.NEW_VERSION }}" ]; then
             git tag -d "${{ env.NEW_VERSION }}"
             git push origin :refs/tags/"${{ env.NEW_VERSION }}"
