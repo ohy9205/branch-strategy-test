@@ -69,7 +69,7 @@ jobs:
 
           if ! git merge --ff-only origin/release; then
             echo "FF merge failed, falling back to no-FF merge."
-            # git merge --no-ff -X theirs origin/release -m "ff merge failed. Release branch fixes are applied first"
+            git merge --no-ff -X theirs origin/release -m "ff merge failed. Release branch fixes are applied first"
           fi
           git push origin main
       - name: rollback if failure
