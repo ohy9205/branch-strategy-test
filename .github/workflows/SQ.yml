@@ -38,9 +38,6 @@ jobs:
           MINOR=$(echo "${{ env.CURRENT_VERSION }}" | cut -d '.' -f2)
           PATCH=$(echo "${{ env.CURRENT_VERSION }}" | cut -d '.' -f3)
 
-          TEST="123"
-          echo TEST >> $GITHUB_ENV
-          echo ${{ env.TEST }}
 
           if [[ "${INPUT_SELECTION}" == "minor" ]]; then
             NEW_MINOR=$((MINOR + 1))
