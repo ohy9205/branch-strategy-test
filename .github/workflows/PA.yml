@@ -79,6 +79,6 @@ jobs:
           git reset --hard "${{ env.OLD_HEAD }}"
           git push origin HEAD:release --force
           if [ -n "${{ env.NEW_VERSION }}" ]; then
-            git tag -d "${{ env.NEW_VERSION }}"
-            git push origin :refs/tags/"${{ env.NEW_VERSION }}"
+            git tag -d "v${{ env.NEW_VERSION }}"
+            git push origin :refs/tags/"v${{ env.NEW_VERSION }}"
           fi
