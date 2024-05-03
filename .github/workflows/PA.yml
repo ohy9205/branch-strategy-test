@@ -53,15 +53,6 @@ jobs:
           git add info/version.info
           git commit -m "Update Version to ${VERSION}"
           git push origin release
-      - name: merge release into main
-        run: |
-          git fetch origin main
-          git switch -c main origin/main
-          if ! git merge --ff origin/release; then
-            echo "FF merge failed, falling back to no-FF merge."
-            git merge --no-ff origin/release -m "Merge release into main with merge commit "
-          fi
-          git push origin main
       - name: tag process
         run: |
           set -e  # terminate on error
@@ -78,6 +69,15 @@ jobs:
             git tag QC
           fi
           git push -f origin QC
+      - name: merge release into main
+        run: |
+          git fetch origin main
+          git switch -c main origin/main
+          if ! git merge --ff origin/release; then
+            echo "FF merge failed, falling back to no-FF merge."
+            git merge --no-ff origin/release -m "Merge release into main with merge commit "
+          fi
+          git push origin main
       - name: rollback if failure
         if: ${{ failure() }}
         run: |
