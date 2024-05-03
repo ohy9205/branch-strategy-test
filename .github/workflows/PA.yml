@@ -49,7 +49,7 @@ jobs:
         run: |
           set -e  # terminate on error
 
-          VERSION_TAG="v${{ env.UPDATE_VERSION }}"
+          VERSION_TAG="v${{ env.NEW_VERSION }}"
 
           git tag "${VERSION_TAG}"
           git push origin "${VERSION_TAG}"
